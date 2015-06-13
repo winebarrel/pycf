@@ -82,3 +82,23 @@ puts Pycf.dump(hash)
 #    port = 50022
 #    forwardx11 = no
 ```
+
+### Interpolation
+
+```ruby
+require 'pycf'
+
+python_config = <<EOS
+[My Section]
+foodir: %(dir)s/whatever
+dir=frob
+long: this value continues
+   in the next line
+EOS
+
+p Pycf.load(python_config)
+# => {"My Section"=>
+#      {"foodir"=>"%(dir)s/whatever",
+#       "dir"=>"frob",
+#       "long"=>"this value continues\nin the next line"}}
+```
