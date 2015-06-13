@@ -2,7 +2,8 @@
 # (License: https://github.com/python/cpython/blob/2.7/LICENSE)
 module Pycf
   SECTCRE = /\A\[(?<header>[^\]]+)\]/
-  OPTCRE_NV = /\A(?<option>[^:=\s][^:=]*)\s*(?:(?<vi>[:=])\s*(?<value>.*))?\z/                   # everything up to eol
+  OPTCRE_NV = /\A(?<option>[^:=\s][^:=]*)\s*(?:(?<vi>[:=])\s*(?<value>.*))?\z/
+  KEYCRE = /(\A|.)%\(([^)]+)\)s/
 
   def load(python_config, option = {})
     hash = {}
@@ -59,6 +60,23 @@ module Pycf
             cursect[optname] = optval
           else
             raise ParsingError.new(lineno, line)
+          end
+        end
+      end
+    end
+
+    if option[:interpolation]
+      hash.each do |section, key_values|
+        key_values.each do |key, value|
+          value.gsub!(/(\A|.)%\(([^)]+)\)s/) do
+            preword = $1
+            key = $2
+
+            if preword == '%'
+              "%(#{key})s"
+            else
+              key_values[key.downcase]
+            end
           end
         end
       end

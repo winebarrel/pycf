@@ -3,7 +3,15 @@ require 'spec_helper'
 describe Pycf do
   describe '#load' do
     let(:allow_no_value) { false }
-    subject { described_class.load(python_config, allow_no_value: allow_no_value) }
+    let(:interpolation) { false }
+
+    subject do
+      described_class.load(
+        python_config,
+        allow_no_value: allow_no_value,
+        interpolation: interpolation
+      )
+    end
 
     context 'when basic config' do
       let(:python_config) do
@@ -213,6 +221,103 @@ ServerAliveInterval
 
       it do
         expect { subject }.to raise_error Pycf::MissingSectionHeaderError
+      end
+    end
+
+    context 'when use interpolation' do
+      let(:interpolation) { true }
+
+      context 'when replace key' do
+        let(:python_config) do
+          <<-EOS
+[DEFAULT]
+ServerAliveInterval = 45
+Compression = yes
+CompressionLevel = %(serveraliveinterval)s
+ForwardX11 = %(Compression)s
+
+[bitbucket.org]
+User = hg
+
+[topsecret.server.com]
+Port = 50022
+ForwardX11 = no
+          EOS
+        end
+
+        it do
+          is_expected.to eq(
+            {"DEFAULT"=>
+              {"serveraliveinterval"=>"45",
+               "compression"=>"yes",
+               "compressionlevel"=>"45",
+               "forwardx11"=>"yes"},
+             "bitbucket.org"=>{"user"=>"hg"},
+             "topsecret.server.com"=>{"port"=>"50022", "forwardx11"=>"no"}}
+          )
+        end
+      end
+
+      context 'when escape interpolation' do
+        let(:python_config) do
+          <<-EOS
+[DEFAULT]
+ServerAliveInterval = 45
+Compression = yes
+CompressionLevel = %(serveraliveinterval)s
+ForwardX11 = %%(Compression)s
+
+[bitbucket.org]
+User = hg
+
+[topsecret.server.com]
+Port = 50022
+ForwardX11 = no
+          EOS
+        end
+
+        it do
+          is_expected.to eq(
+            {"DEFAULT"=>
+              {"serveraliveinterval"=>"45",
+               "compression"=>"yes",
+               "compressionlevel"=>"45",
+               "forwardx11"=>"%(Compression)"},
+             "bitbucket.org"=>{"user"=>"hg"},
+             "topsecret.server.com"=>{"port"=>"50022", "forwardx11"=>"no"}}
+          )
+        end
+      end
+
+      context 'when include invalid interpolation' do
+        let(:python_config) do
+          <<-EOS
+[DEFAULT]
+ServerAliveInterval = 45
+Compression = yes
+CompressionLevel = %(serveraliveinterval)
+ForwardX11 = %(XXX)s
+
+[bitbucket.org]
+User = hg
+
+[topsecret.server.com]
+Port = 50022
+ForwardX11 = %(Compression)s
+          EOS
+        end
+
+        it do
+          is_expected.to eq(
+            {"DEFAULT"=>
+              {"serveraliveinterval"=>"45",
+               "compression"=>"yes",
+               "compressionlevel"=>"%(serveraliveinterval)",
+               "forwardx11"=>""},
+             "bitbucket.org"=>{"user"=>"hg"},
+             "topsecret.server.com"=>{"port"=>"50022", "forwardx11"=>""}}
+          )
+        end
       end
     end
   end
