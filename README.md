@@ -96,9 +96,9 @@ long: this value continues
    in the next line
 EOS
 
-p Pycf.load(python_config)
+p Pycf.load(python_config, interpolation: true)
 # => {"My Section"=>
-#      {"foodir"=>"%(dir)s/whatever",
+#      {"foodir"=>"frob/whatever",
 #       "dir"=>"frob",
 #       "long"=>"this value continues\nin the next line"}}
 ```
