@@ -68,7 +68,7 @@ module Pycf
     if option[:interpolation]
       hash.each do |section, key_values|
         key_values.each do |key, value|
-          value.gsub!(/(\A|.)%\(([^)]+)\)s/) do
+          value.gsub!(KEYCRE) do
             preword = $1
             key = $2
 
