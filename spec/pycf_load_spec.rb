@@ -282,7 +282,7 @@ ForwardX11 = no
               {"serveraliveinterval"=>"45",
                "compression"=>"yes",
                "compressionlevel"=>"45",
-               "forwardx11"=>"%(Compression)"},
+               "forwardx11"=>"%(Compression)s"},
              "bitbucket.org"=>{"user"=>"hg"},
              "topsecret.server.com"=>{"port"=>"50022", "forwardx11"=>"no"}}
           )
