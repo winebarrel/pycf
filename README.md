@@ -4,6 +4,10 @@ Configuration file parser for [Python 2.7 basic configuration file](https://docs
 
 see [ConfigParser.py](https://github.com/python/cpython/blob/2.7/Lib/ConfigParser.py).
 
+[![Gem Version](https://badge.fury.io/rb/pycf.svg)](http://badge.fury.io/rb/pycf)
+[![Build Status](https://travis-ci.org/winebarrel/pycf.svg?branch=master)](https://travis-ci.org/winebarrel/pycf)
+[![Coverage Status](https://coveralls.io/repos/winebarrel/pycf/badge.svg?branch=master)](https://coveralls.io/r/winebarrel/pycf?branch=master)
+
 ## Installation
 
 Add this line to your application's Gemfile:
