@@ -2,6 +2,10 @@
 # (License: https://github.com/python/cpython/blob/2.7/LICENSE)
 module Pycf
   def dump(hash)
+    unless hash.is_a?(Hash)
+      raise TypeError, "wrong argument type #{hash.class} (expected Hash)"
+    end
+
     python_config = []
 
     hash.each do |section, key_values|
