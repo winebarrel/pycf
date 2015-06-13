@@ -1,8 +1,8 @@
 # Pycf
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/pycf`. To experiment with that code, run `bin/console` for an interactive prompt.
+Configuration file parser for [Python 2.7 basic configuration file](https://docs.python.org/2.7/library/configparser.html).
 
-TODO: Delete this and the text above, and describe your gem
+see [ConfigParser.py](https://github.com/python/cpython/blob/2.7/Lib/ConfigParser.py).
 
 ## Installation
 
@@ -22,20 +22,59 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### load
 
-## Development
+```ruby
+require 'pycf'
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+python_config = <<EOS
+[DEFAULT]
+ServerAliveInterval = 45
+Compression = yes
+CompressionLevel = 9
+ForwardX11 = yes
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+[bitbucket.org]
+User = hg
 
-## Contributing
+[topsecret.server.com]
+Port = 50022
+ForwardX11 = no
+EOS
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/pycf.
+p Pycf.load(python_config)
+# => {"DEFAULT"=>
+#      {"serveraliveinterval"=>"45",
+#       "compression"=>"yes",
+#       "compressionlevel"=>"9",
+#       "forwardx11"=>"yes"},
+#     "bitbucket.org"=>{"user"=>"hg"},
+#     "topsecret.server.com"=>{"port"=>"50022", "forwardx11"=>"no"}}
+```
 
+### dump
 
-## License
+```ruby
+require 'pycf'
+require 'pp'
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+hash = {"DEFAULT"=>
+         {"serveraliveinterval"=>"45",
+          "compression"=>"yes",
+          "compressionlevel"=>"9",
+          "forwardx11"=>"yes"},
+        "bitbucket.org"=>{"user"=>"hg"},
+        "topsecret.server.com"=>{"port"=>"50022", "forwardx11"=>"no"}}
 
+puts Pycf.dump(hash)
+# => [DEFAULT]
+#    serveraliveinterval = 45
+#    compression = yes
+#    compressionlevel = 9
+#    forwardx11 = yes
+#    [bitbucket.org]
+#    user = hg
+#    [topsecret.server.com]
+#    port = 50022
+#    forwardx11 = no
+```
