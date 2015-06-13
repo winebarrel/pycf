@@ -72,5 +72,27 @@ multiline_values = are
         expect { subject }.to raise_error TypeError
       end
     end
+
+    context 'when dump no string value' do
+      let(:hash) {
+        {"Simple Values"=>
+          {"values like this"=>1000000,
+           "or this"=>3.14159265359,
+           "are they treated as numbers?"=>false,
+           "integers, floats and booleans are held as"=>"strings",
+           "can use the api to get converted values directly"=>true}}
+      }
+
+      it do
+        is_expected.to eq <<-EOS.chomp
+[Simple Values]
+values like this = 1000000
+or this = 3.14159265359
+are they treated as numbers? = ""
+integers, floats and booleans are held as = strings
+can use the api to get converted values directly = true
+        EOS
+      end
+    end
   end
 end

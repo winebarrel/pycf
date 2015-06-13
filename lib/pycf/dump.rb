@@ -12,7 +12,7 @@ module Pycf
       python_config << "[#{section}]"
 
       key_values.each do |key, value|
-        value = (value || '').gsub("\n", "\n\t")
+        value = (value || '').to_s.gsub("\n", "\n\t")
         value = '""' if value.empty?
         python_config << "#{key} = #{value}"
       end
