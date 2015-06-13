@@ -88,7 +88,7 @@ multiline_values = are
 [Simple Values]
 values like this = 1000000
 or this = 3.14159265359
-are they treated as numbers? = ""
+are they treated as numbers? = false
 integers, floats and booleans are held as = strings
 can use the api to get converted values directly = true
         EOS
