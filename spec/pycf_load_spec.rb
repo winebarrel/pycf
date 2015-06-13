@@ -124,6 +124,19 @@ Rem comment
       end
     end
 
+    context 'when include empty value' do
+      let(:python_config) do
+        <<-EOS
+[topsecret.server.com]
+ForwardX11 = ""
+        EOS
+      end
+
+      it do
+        is_expected.to eq({"topsecret.server.com"=>{"forwardx11"=>""}})
+      end
+    end
+
     context 'when include invalid comment' do
       let(:python_config) do
         <<-EOS
